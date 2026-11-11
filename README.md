@@ -22,7 +22,7 @@ To maintain FMM SOTA, we need to transition from a centralized site not enough s
 
 Participation is completely informal—any feedback or occasional contribution is welcome:
 
-- **Review & Code:** Check out and join the project at [github.com/sedoglavic/fastmatmuldb](https://github.com/sedoglavic/fastmatmuldb) (only this email is currently committed as manifesto.md).
+- **Review & Code:** Check out and join the project at [github.com/sedoglavic/fastmatmuldb](https://github.com/sedoglavic/fastmatmuldb).
 - **Feedback request:** Do you agree with the hypergraph abstraction? What features or metadata are missing for your use case?
 
 ***
@@ -42,3 +42,7 @@ Participation is completely informal—any feedback or occasional contribution i
 Maybe finite field flip path (and, if some, rational reconstruction) could also be encoded in this hypergraph.
 
 Further extensions to commutative, approximate, semi-field, less inaccurate tensor decomposition are possible.
+
+## First attempt
+
+A tensor-decomposition.schema.json is available for comments.

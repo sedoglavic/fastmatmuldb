@@ -1,0 +1,140 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "TensorDecomposition",
+  "description": "Represents a tensor decomposition as either a triad set or an LRP representation with explicit dimensions, CSR matrices, and a flexible knownStabilizer field including groupID.",
+  "contributor": {
+      		"type": "string",
+      		"description": "The contributor's 16-digit ORCID iD in full URI or standard hyphenated format.",
+      		"pattern": "^(https://orcid\\.org/)?\\d{4}-\\d{4}-\\d{4}-\\d{3}[0-9X]$"
+    },
+    "createdAt": {
+      "type": "string",
+      "format": "date-time",
+      "description": "The ISO 8601 date and time when this JSON data file was created."
+    },
+  "oneOf": [
+    {
+      "$ref": "#/$defs/TriadSetRepresentation"
+    },
+    {
+      "$ref": "#/$defs/LRPRepresentation"
+    }
+  ],
+  "$defs": {
+    "CSRMatrixWithoutField": {
+      "type": "object",
+      "properties": {
+        "rowDimension": { "type": "integer", "minimum": 0, "description": "Number of rows (non-negative integer)." },
+        "columnDimension": { "type": "integer", "minimum": 0, "description": "Number of columns (non-negative integer)." },
+        "format": { "type": "string", "enum": ["csr"] },
+        "indptr": { "type": "array", "items": { "type": "integer", "minimum": 0 } },
+        "indices": { "type": "array", "items": { "type": "integer", "minimum": 0 } },
+        "data": { "type": "array", "items": { "type": "number" } }
+      },
+      "required": ["rowDimension", "columnDimension", "format", "indptr", "indices", "data"],
+      "additionalProperties": false
+    },
+    "KnownStabilizer": {
+      "description": "Can be either the string 'Cyclic(1)' or an object containing a groupID (couple of integers >= 1, e.g., [1, 1] for Cyclic(1)), description, and stabilizer_url.",
+      "oneOf": [
+        {
+          "type": "string",
+          "const": "Cyclic(1)"
+        },
+        {
+          "type": "object",
+          "properties": {
+            "groupID": {
+              "type": "array",
+              "description": "A couple of integers >= 1 representing the group ID (e.g., [1, 1] for Cyclic(1)).",
+              "minItems": 2,
+              "maxItems": 2,
+              "items": {
+                "type": "integer",
+                "minimum": 1
+              }
+            },
+            "description": {
+              "type": "string",
+              "description": "Textual description of the stabilizer."
+            },
+            "stabilizer_url": {
+              "type": "string",
+              "format": "uri",
+              "description": "URL to the JSON file encoding this stabilizer."
+            }
+          },
+          "required": ["groupID"],
+          "additionalProperties": false
+        }
+      ]
+    },
+    "TriadSetRepresentation": {
+      "type": "object",
+      "properties": {
+        "decomposition_type": {
+          "type": "string",
+          "const": "triad_set"
+        },
+        "description": { "type": "string" },
+        "field": {
+          "type": "string",
+          "enum": ["R", "Q", "C", "Z"]
+        },
+        "r": { "type": "integer", "minimum": 1, "description": "Number of triads." },
+        "n": { "type": "integer", "minimum": 1, "description": "Dimension n." },
+        "k": { "type": "integer", "minimum": 1, "description": "Dimension k." },
+        "m": { "type": "integer", "minimum": 1, "description": "Dimension m." },
+        "knownStabilizer": {
+          "$ref": "#/$defs/KnownStabilizer"
+        },
+        "triads": {
+          "type": "array",
+          "description": "Array of r triads, where each triad is an ordered list of 3 CSR matrices (n x k, k x m, m x n).",
+          "items": {
+            "type": "array",
+            "minItems": 3,
+            "maxItems": 3,
+            "items": {
+              "$ref": "#/$defs/CSRMatrixWithoutField"
+            }
+          }
+        }
+      },
+      "required": ["decomposition_type", "field", "r", "n", "k", "m", "triads"],
+      "additionalProperties": false
+    },
+    "LRPRepresentation": {
+      "type": "object",
+      "properties": {
+        "decomposition_type": {
+          "type": "string",
+          "const": "lrp"
+        },
+        "description": { "type": "string" },
+        "field": {
+          "type": "string",
+          "enum": ["R", "Q", "C", "Z"]
+        },
+        "r": { "type": "integer", "minimum": 1, "description": "Dimension parameter r." },
+        "n": { "type": "integer", "minimum": 1, "description": "Dimension parameter n." },
+        "k": { "type": "integer", "minimum": 1, "description": "Dimension parameter k." },
+        "m": { "type": "integer", "minimum": 1, "description": "Dimension parameter m." },
+        "knownStabilizer": {
+          "$ref": "#/$defs/KnownStabilizer"
+        },
+        "matrices": {
+          "type": "array",
+          "description": "Ordered list of 3 matrices: r x nk, r x km, nm x r.",
+          "minItems": 3,
+          "maxItems": 3,
+          "items": {
+            "$ref": "#/$defs/CSRMatrixWithoutField"
+          }
+        }
+      },
+      "required": ["decomposition_type", "field", "r", "n", "k", "m", "matrices"],
+      "additionalProperties": false
+    }
+  }
+}
